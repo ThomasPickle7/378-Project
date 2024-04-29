@@ -104,6 +104,7 @@ To reduce the size, which would take up thousands of columns, we aggregated the 
 
 ## Preprocessing
 - After extracting the features, we normalized the data. We did this to ensure that the features were on the same scale, as some features had much larger values than others. This was done after aggregating the data, as normalizing the data before aggregating it would have resulted in the loss of information from the std and extrema features. We used the MinMaxScaler from sklearn to normalize the data, as it scales the data to be between 0 and 1, which is useful for neural networks.
+- We considered splitting the test data into 5-10 second chunks, in order to provide us with more data. However since we decided to use primarily spectral features, most of which derive from a short time Fourier transform, we determined that the split data would yield many of the same features, while adding unnecessary noise to the data.
 
 ## Feature Selection
 After processing and aggregating the data, we were left with a total of 65 scalar features, derived from 14 spectral features. This seemed like a reasonable number of features to work with, but to be sure, we manually went through the features to see if any could be removed. Some features were removed because they were uniform across all samples. For example, the minimum of the zero crossing rate was zero for every sample, since the zero crossing rate is always positive, so it could be removed. This left us with 60 unique features going into the model.
@@ -166,15 +167,15 @@ We tuned several parameters in creating the neural network. These included an op
 
 
 # Complete Pipeline
-The entire pipeline can be seen in the code that we submitted in the CNN code in that model’s section. But, as a summary, the pipeline could be summarized by the following. 
-1. Load the data
-2. Extract the features
-3. Aggregate the features
-4. Normalize the features
-5. Split the data into training and validation sets
-6. Train the model
-7. Validate the model
-8. Make predictions on the test data
+Our complete pipeline can be found between the 'feature_extraction.ipynb' and 'training_model.ipynb' files in the project repository. It is summarized as follows: 
+1. Load the data- This process involves extracting time-series data from the wave files being tested.
+2. Extract the features- This process is explored in-depth in its respective section of this report
+3. Aggregate and normalize the features- This process is explored in its respective section
+5. Split the data into training and validation sets- We used a 90/10 split for this step, as well as for cross-validation
+6. Train the model- Our three models, Logistic Regression, A deep Neural Network, and Random Forest Classifier, are explained in their repsective sections
+7. Validate the model- We used a 90/10 split to perform cross-validation of our model
+8. Make predictions on the test data- these predictions are saved to CSV files.
+A diagram of our pipeline can be found below:
 
 
 # Conclusions
