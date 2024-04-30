@@ -178,7 +178,7 @@ Our complete pipeline can be found between the 'feature_extraction.ipynb' and 't
 7. Validate the model- We used a 90/10 split to perform cross-validation of our model
 8. Make predictions on the test data- these predictions are saved to CSV files.
 A diagram of our pipeline can be found below:
-
+![images](/diagrams/378-Flow-Chart.png)
 
 # Conclusions
 ## Future Improvements
