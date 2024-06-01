@@ -1,36 +1,29 @@
-# 378-Project
-This is a repository for collaboration on our ELEC 378 final project
 
-# Repo Link
 The link to the repo can be found [here](https://github.com/ThomasPickle7/378-Project).
 
 
 # Objective
 - The goal of this project was to classify music samples into one of 10 genres. To do this, we were given 800 labeled, 30-second audio clips and 200 unlabeled ones, which were to be used as testing data. The genres included: Rock, Jazz, Pop, Hip-Hop, Reggae, Country, Metal, Disco, Classical, and Blues.
 
-# Pre-reqs
-- Due to their size, the directories 'train' and 'test' containing the respective data aren't stored in the repo and must be downloaded and put in the repository manually
-
-# How to run the code
-- The features of the model are saved in the 'features_test' and 'features_train' folders. Each set of features is stored in a .csv file. The features are extracted from the audio files in the 'test' and 'train' folders
-- Since the features of the data are already extracted, the only thing necessary to interface with is the 'training_model.ipynb' file. this file contains the code to train/test the model.
-
 # Data Exploration
-The data is stored in the 'train' and 'test' folders. Each folder contains 10 subfolders, each corresponding to a different genre of music. Each subfolder contains 100 audio files of 30 seconds each. The audio files are in .wav format.
+The data is stored in the 'train' and 'test' folders. Each folder contains 10 subfolders, each corresponding to a different genre of music. Each subfolder contains audio files of 30 seconds each. The audio files are in .wav format.
 We began by listening to a few of the samples. Most were high-quality and easy to discern the genre. However, there were a few samples that felt as though they could belong to multiple or even none of those listed in the assignment description. This was useful to know before starting, as it meant that an imperfect model may be expected and that we would need to find a way to quantify the uncertainty of our model's predictions.
 Next, we read the files into Python in the form of numpy arrays. Checking the shape revealed that the audio files were 661,504, which is approximately 30 seconds of audio at a sample rate of 22,050 Hz. We also checked the sample rate of the audio files to confirm that it was 22,050 Hz. From this, we knew that if we were going to extract features from the audio files, we would need to reduce the size of the data by some means.
 Finally, we plotted some of the audio file's time and frequency domain representations. This was done to get a better understanding of the data and to see if there were any obvious differences between the genres in the time and frequency domains. We found that the time domain representations were very similar between the genres, but the frequency domain representations were different. This was expected, as things like percussive instruments, rhythm, and tempo are more easily discerned in the frequency domain.
-<br></br>
-This shows the time-domain graph of song 1, both the full 30 seconds, as well as zoomed in to the first 5 seconds. The data in this form hasn't been processed enough to directly classify based on it, so we needed to extract features for the models to train based on.
-![images](/visualizations/raw-audio-signal-time-series.png)
-![images](/visualizations/raw-audio-signal-time-series-zoomed.png)
-<br></br>
-Below are the Fourier transforms of several songs, where you can see that there are visible differences in the spectra of each song
-![image](/visualizations/fast-fourier-transform-song-1.png)
-![image](/visualizations/fast-fourier-transform-song-2.png)
-![image](/visualizations/fast-fourier-transform-song-3.png)
-![image](/visualizations/fast-fourier-transform-song-4.png)
 
+This shows the time-domain graph of song 1, both the full 30 seconds, as well as zoomed in to the first 5 seconds. The data in this form hasn't been processed enough to directly classify based on it, so we needed to extract features for the models to train based on.
+
+![image](/visualizations/raw-audio-signal-time-series.png)
+
+![image](/visualizations/raw-audio-signal-time-series-zoomed.png)
+
+Below are the Fourier transforms of several songs, where you can see that there are visible differences in the spectra of each song
+
+![image](/visualizations/fft-1.png)
+
+![image](/visualizations/fft-2.png)
+
+![image](/visualizations/fft-3.png)
 
 # Features
 ## Extracted Features
@@ -158,7 +151,8 @@ The regularizer is used to prevent over-fitting, and is calcualted by taking a n
 - https://en.wikipedia.org/wiki/Decision_tree_learning
 
 - The Random Forest model is at its heart an ensemble of decision trees, so to start we will define these trees. Decision trees are a classical machine learning method where the feature space is partitioned through learning. The structure of the tree denotes some sort of hierarchical prioritization, where we move through data sequentially. A tree is composed of nodes and branches. Each node is the intersection of some feature information, from which the branches differentiate possible values. For our use case, consider tempo. The decision tree would have a node representing tempo values, and branches exiting the node for different ranges. Say that one edge represents a tempo between 120 and 150 bpm, from which the decision tree decides that the corresponding music clip is jazz. A decision tree contains many of these nodes and decisions, where eventually each leaf node represents some kind of classification, depending on which side of each possible decision a test point falls.
-![images](/diagrams/RandomForest.png)
+
+![image](/diagrams/RandomForest.png)
 
 - Decision Trees can be very effective when learning training data, but they often struggle with overfitting and inherent bias. The edges of the decision tree often fit too closely to the information in the training data's features. One way this is mitigated is through the Random Forest model. The implementation is an ensemble of decision trees, which for the classification instance means that we compute multiple classifications and then choose the one that appears most, similar to a K-NN algorithm. Additionally, each decision tree is constructed with only a subset of the feature information, which further helps prevent bias and overfitting. For example, if we are training over all 65 features, each decision tree may only be partitioned across 20-30. This subsampling allows for a low correlation across the trees, meaning that their outputs are more resistant to overfitting the data. In our use case, instead of fitting to all of the feature information and possibly overfitting to them, we instead select subsets of the features, and through aggregating the outputs we can find which subsets are most applicable to that test case.
 - This architecture is one we believe is beneficial to this use case particularly because of the inherent variation in the feature space. While genres of music are helpful in grouping and understanding similarities, differences across these groups are inevitable. Thus, by creating these subsets of features and training over them, we can hopefully find which features are most important at a song level, rather than a genre level, and take this difference into account when predicting. So, if we find a jazz song with an exceptionally high tempo, we can still find the other important features that denote it is a jazz song and classify it correctly.
@@ -180,7 +174,8 @@ Our complete pipeline can be found between the 'feature_extraction.ipynb' and 't
 7. Validate the model- We used a 90/10 split to perform cross-validation of our model
 8. Make predictions on the test data- these predictions are saved to CSV files.
 A diagram of our pipeline can be found below:
-![images](/diagrams/378-Flow-Chart.png)
+
+![image](/diagrams/378-Flow-Chart.png)
 
 # Conclusions
 ## Future Improvements
@@ -190,23 +185,10 @@ The last main area of future improvement that we considered while working on the
 
 ## Takeaways
 From our cross-validation, it seems that all of our models perform somewhat similarly. Given that random guessing in a scenario like this would yield an accuracy of only 10%, the scores of around 70% that our models are able to achieve is definitely relevant, meaning that they definitely show signs of predictive capabilities. In terms of generalizability, our models yielded mixed results. The Logistic Regression and Nueral Network both performed at aapproxmattely 10 percent below their cross-validated scores. This dip is somewhat acceptable given that the testing data was never part of the model, and is within the range of believable scores. Overall, we're satisfied with the models we've constructed.
-![images](/visualizations/cross-val-leaderboard.png)
+
+![image](/visualizations/cross-val-leaderboard.png)
 ## Models we will (should) look into
 - SVM
 - Logistic Regression
 - Neural network
 - Random Forest
-
-
-# Potentially useful links
-https://www.mage.ai/blog/music-genre-classification
-https://www.analyticsvidhya.com/blog/2022/03/music-genre-classification-project-using-machine-learning-techniques/
-https://towardsdatascience.com/music-genre-classification-with-python-c714d032f0d8
-
-
-# Acknowledgements:
-- Members:
-  - Max Kuhlman
-  - Sam Lim
-  - Thomas Pickell
-  - Alex Zalles
